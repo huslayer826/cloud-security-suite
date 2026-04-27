@@ -57,11 +57,7 @@ def filter_by_threshold(findings: list[Finding], threshold: str | None) -> list[
 
     threshold_severity = Severity[threshold]
     threshold_rank = SEVERITY_ORDER[threshold_severity]
-    return [
-        finding
-        for finding in findings
-        if SEVERITY_ORDER[finding.severity] >= threshold_rank
-    ]
+    return [finding for finding in findings if SEVERITY_ORDER[finding.severity] >= threshold_rank]
 
 
 def run_audit(profile: str | None, region: str) -> list[Finding]:
