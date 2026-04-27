@@ -1,0 +1,10 @@
+boto3
+botocore
+jinja2
+rich
+pytest
+pytest-cov
+moto[all]
+ruff
+mypy
+types-boto3
