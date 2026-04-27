@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloud Security Suite Report</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1117;
+      --panel: #161b22;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --border: #30363d;
+      --critical: #ff4d4f;
+      --high: #ff9f43;
+      --medium: #f4d35e;
+      --low: #58a6ff;
+      --info: #8b949e;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    h1, h2 {
+      margin: 0 0 16px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .card, .chart-placeholder {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .metric {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .value {
+      display: block;
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .chart-placeholder {
+      margin-bottom: 28px;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .severity {
+      font-weight: 700;
+    }
+
+    .CRITICAL { color: var(--critical); }
+    .HIGH { color: var(--high); }
+    .MEDIUM { color: var(--medium); }
+    .LOW { color: var(--low); }
+    .INFO { color: var(--info); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Cloud Security Suite Report</h1>
+    <section class="summary" aria-label="Report summary">
+      <div class="card">
+        <span class="metric">Total Findings</span>
+        <span class="value">{{ total_findings }}</span>
+      </div>
+      <div class="card">
+        <span class="metric">Risk Score</span>
+        <span class="value">{{ risk_score }}</span>
+      </div>
+      {% for severity, count in summary.items() %}
+      <div class="card">
+        <span class="metric">{{ severity }}</span>
+        <span class="value">{{ count }}</span>
+      </div>
+      {% endfor %}
+    </section>
+
+    <section class="chart-placeholder">Breakdown chart placeholder</section>
+
+    <h2>Findings</h2>
+    <table id="findings-table">
+      <thead>
+        <tr>
+          <th>Severity</th>
+          <th>Tool</th>
+          <th>Check ID</th>
+          <th>Resource</th>
+          <th>Region</th>
+          <th>Title</th>
+          <th>Remediation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for finding in findings %}
+        <tr>
+          <td class="severity {{ finding.severity.name }}">{{ finding.severity.name }}</td>
+          <td>{{ finding.tool }}</td>
+          <td>{{ finding.check_id }}</td>
+          <td>{{ finding.resource }}</td>
+          <td>{{ finding.region or "-" }}</td>
+          <td>{{ finding.title }}</td>
+          <td>{{ finding.remediation }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </main>
+  <script>
+    document.querySelectorAll("#findings-table th").forEach((header, columnIndex) => {
+      header.addEventListener("click", () => {
+        const table = header.closest("table");
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        rows.sort((left, right) => {
+          const leftValue = left.children[columnIndex].innerText;
+          const rightValue = right.children[columnIndex].innerText;
+          return leftValue.localeCompare(rightValue);
+        });
+        tbody.replaceChildren(...rows);
+      });
+    });
+  </script>
+</body>
+</html>
