@@ -15,7 +15,9 @@ dist/
 build/
 .pytest_cache/
 .coverage
+coverage.xml
 htmlcov/
 .mypy_cache/
 .ruff_cache/
 *.zip
+docs/interview-prep.md
