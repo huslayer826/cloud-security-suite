@@ -7,6 +7,7 @@ import logging
 import os
 from typing import Any
 from urllib import request
+from urllib.parse import urlparse
 
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
@@ -43,7 +44,7 @@ def notify(
         try:
             post_slack(webhook_url, finding, detail, remediation_findings)
             result["slack"] = "published"
-        except OSError as error:
+        except (OSError, ValueError) as error:
             LOGGER.warning("Unable to publish Slack notification: %s", error)
             result["slack"] = "failed"
 
@@ -78,6 +79,10 @@ def post_slack(
     detail: dict[str, Any],
     remediation_findings: list[Finding],
 ) -> None:
+    parsed_url = urlparse(webhook_url)
+    if parsed_url.scheme != "https":
+        raise ValueError("Slack webhook URL must use HTTPS")
+
     payload = {
         "blocks": [
             {
@@ -122,7 +127,7 @@ def post_slack(
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with request.urlopen(req, timeout=5) as response:
+    with request.urlopen(req, timeout=5) as response:  # nosec B310
         response.read()
 
 

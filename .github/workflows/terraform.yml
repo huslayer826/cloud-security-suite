@@ -1,0 +1,41 @@
+name: terraform
+
+on:
+  pull_request:
+    paths:
+      - "infrastructure/**"
+      - ".github/workflows/terraform.yml"
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.6"
+
+      - name: Check Terraform formatting
+        working-directory: infrastructure
+        run: terraform fmt -check -recursive
+
+      - name: Initialize Terraform without backend
+        working-directory: infrastructure
+        run: terraform init -backend=false
+
+      - name: Validate Terraform
+        working-directory: infrastructure
+        run: terraform validate
+
+      - name: Set up tflint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: Run tflint best-effort
+        working-directory: infrastructure
+        run: |
+          tflint --init
+          tflint --recursive || true

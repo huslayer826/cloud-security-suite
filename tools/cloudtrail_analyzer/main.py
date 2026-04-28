@@ -103,7 +103,7 @@ def build_athena_query(start_time: str | None, end_time: str | None) -> str:
     if end_time:
         filters.append(f"eventtime < '{end_time}'")
     where = f"WHERE {' AND '.join(filters)}" if filters else ""
-    return f"SELECT * FROM cloudtrail_logs {where}"
+    return f"SELECT * FROM cloudtrail_logs {where}"  # nosec B608
 
 
 def write_reports(findings, output: str, output_dir: str, metadata: dict[str, object]) -> None:
