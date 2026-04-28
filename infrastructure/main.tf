@@ -45,3 +45,18 @@ module "guardduty_processor" {
   lambda_source_hash   = try(filebase64sha256("${path.module}/modules/guardduty_processor/guardduty_processor_lambda.zip"), null)
   permissions_boundary = var.permissions_boundary
 }
+
+module "cloudtrail_analyzer" {
+  source = "./modules/cloudtrail_analyzer"
+
+  project_name           = var.project_name
+  environment            = var.environment
+  aws_region             = var.aws_region
+  notification_email     = var.notification_email
+  cloudtrail_bucket_name = var.cloudtrail_bucket_name
+  cloudtrail_prefix      = var.cloudtrail_prefix
+  schedule_expression    = var.cloudtrail_analyzer_schedule_expression
+  lambda_package_path    = "${path.module}/modules/cloudtrail_analyzer/cloudtrail_analyzer_lambda.zip"
+  lambda_source_hash     = try(filebase64sha256("${path.module}/modules/cloudtrail_analyzer/cloudtrail_analyzer_lambda.zip"), null)
+  permissions_boundary   = var.permissions_boundary
+}

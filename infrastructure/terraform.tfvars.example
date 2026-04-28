@@ -12,3 +12,8 @@ enable_guardduty          = false
 guardduty_auto_remediate  = false
 guardduty_dry_run         = true
 slack_webhook_url         = ""
+
+# CloudTrail Analyzer
+cloudtrail_bucket_name                  = "my-existing-cloudtrail-bucket"
+cloudtrail_prefix                       = ""
+cloudtrail_analyzer_schedule_expression = "rate(24 hours)"

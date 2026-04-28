@@ -57,3 +57,20 @@ variable "slack_webhook_url" {
   default     = ""
   sensitive   = true
 }
+
+variable "cloudtrail_bucket_name" {
+  description = "Existing S3 bucket containing CloudTrail logs."
+  type        = string
+}
+
+variable "cloudtrail_prefix" {
+  description = "Optional prefix inside the CloudTrail bucket before AWSLogs/."
+  type        = string
+  default     = ""
+}
+
+variable "cloudtrail_analyzer_schedule_expression" {
+  description = "EventBridge schedule expression for the CloudTrail Analyzer Lambda."
+  type        = string
+  default     = "rate(24 hours)"
+}

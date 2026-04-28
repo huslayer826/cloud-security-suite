@@ -1,6 +1,6 @@
 # Cloud Security Suite Infrastructure
 
-This Terraform configuration deploys the IAM Auditor as a scheduled AWS Lambda that writes JSON and HTML reports to S3 and publishes high-severity summaries to SNS.
+This Terraform configuration deploys the Cloud Security Suite serverless components: the IAM Auditor, GuardDuty Processor, and CloudTrail Analyzer.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ cp terraform.tfvars.example terraform.tfvars
 
 Edit `terraform.tfvars` and set `notification_email` and any environment-specific values.
 
-Package the Lambda code:
+Package the IAM Auditor Lambda code:
 
 ```bash
 ./modules/iam_auditor/package.sh
@@ -86,6 +86,52 @@ aws logs tail "/aws/lambda/$(terraform output -raw guardduty_processor_lambda_na
 ```
 
 You should also receive an SNS email notification after the subscription is confirmed.
+
+## Deploy CloudTrail Analyzer
+
+The CloudTrail Analyzer uses Athena and Glue to query an existing CloudTrail S3 bucket. It does not create a new CloudTrail trail.
+
+Prerequisites:
+
+- An existing S3 bucket containing CloudTrail logs.
+- The Lambda package created before `terraform plan`.
+- Athena can write query results to the module-managed results bucket.
+
+Configure the source bucket in `terraform.tfvars`:
+
+```hcl
+cloudtrail_bucket_name = "my-existing-cloudtrail-bucket"
+cloudtrail_prefix      = ""
+```
+
+Package the Lambda:
+
+```bash
+./modules/cloudtrail_analyzer/package.sh
+```
+
+Deploy:
+
+```bash
+terraform plan
+terraform apply
+```
+
+Manually invoke the analyzer:
+
+```bash
+aws lambda invoke \
+  --function-name "$(terraform output -raw cloudtrail_analyzer_lambda_name)" \
+  --payload '{}' \
+  response.json
+cat response.json
+```
+
+Generated reports and Athena results are stored in:
+
+```bash
+terraform output -raw cloudtrail_analyzer_results_bucket_name
+```
 
 ## Enable S3 Backend
 
