@@ -1,0 +1,34 @@
+{
+  "version": "0",
+  "id": "event-ec2",
+  "detail-type": "GuardDuty Finding",
+  "source": "aws.guardduty",
+  "account": "123456789012",
+  "region": "us-east-1",
+  "detail": {
+    "id": "gd-ec2-001",
+    "accountId": "123456789012",
+    "region": "us-east-1",
+    "type": "Recon:EC2/PortProbeUnprotectedPort",
+    "severity": 5.0,
+    "title": "Unprotected port on EC2 instance probed",
+    "description": "An EC2 instance has an unprotected port that was probed.",
+    "resource": {
+      "resourceType": "Instance",
+      "instanceDetails": {
+        "instanceId": "i-0123456789abcdef0",
+        "networkInterfaces": [
+          {
+            "vpcId": "vpc-12345678",
+            "subnetId": "subnet-12345678"
+          }
+        ]
+      }
+    },
+    "service": {
+      "detectorId": "12abc34d567e8fa901bc2d34eexample",
+      "eventFirstSeen": "2026-04-27T00:00:00Z",
+      "eventLastSeen": "2026-04-27T00:05:00Z"
+    }
+  }
+}

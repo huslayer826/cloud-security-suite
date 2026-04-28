@@ -1,0 +1,29 @@
+{
+  "version": "0",
+  "id": "event-low",
+  "detail-type": "GuardDuty Finding",
+  "source": "aws.guardduty",
+  "account": "123456789012",
+  "region": "us-east-1",
+  "detail": {
+    "id": "gd-low-001",
+    "accountId": "123456789012",
+    "region": "us-east-1",
+    "type": "Discovery:S3/BucketEnumeration.Unusual",
+    "severity": 2.0,
+    "title": "Unusual S3 bucket enumeration",
+    "description": "A principal enumerated S3 buckets in an unusual way.",
+    "resource": {
+      "resourceType": "S3Bucket",
+      "s3BucketDetails": [
+        {
+          "name": "demo-private-bucket",
+          "arn": "arn:aws:s3:::demo-private-bucket"
+        }
+      ]
+    },
+    "service": {
+      "detectorId": "12abc34d567e8fa901bc2d34eexample"
+    }
+  }
+}
