@@ -1,0 +1,8 @@
+# Copy this file to terraform.tfvars and fill in real values.
+# terraform.tfvars is gitignored and should not be committed.
+
+aws_region          = "us-east-1"
+project_name        = "cloud-security-suite"
+environment         = "prod"
+notification_email  = "you@example.com"
+schedule_expression = "rate(24 hours)"

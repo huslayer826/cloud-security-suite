@@ -73,6 +73,12 @@ INFO: 1
 
 Sample HTML and JSON outputs are committed under `tools/iam_auditor/sample_output/`.
 
+## Deployment
+
+The first Terraform deployment target is the IAM Auditor as a scheduled AWS Lambda with S3 report storage and SNS alerts.
+
+See [infrastructure/README.md](infrastructure/README.md) for packaging, planning, applying, manual invocation, remote state, and destroy instructions.
+
 ## What I Learned
 
 Placeholder for project learnings.
