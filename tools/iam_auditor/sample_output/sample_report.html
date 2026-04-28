@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloud Security Suite IAM Auditor Demo Report</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-2: #0f1623;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --success: #3fb950;
+      --critical: #ff6b6b;
+      --high: #f0883e;
+      --medium: #d29922;
+      --low: #58a6ff;
+      --info: #8b949e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 24px;
+      align-items: center;
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(88, 166, 255, 0.18), transparent 42%),
+        linear-gradient(315deg, rgba(63, 185, 80, 0.12), transparent 35%),
+        var(--panel);
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 32px 0 14px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .meta-item,
+    .summary-card,
+    .chart,
+    .controls {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(13, 17, 23, 0.66);
+    }
+
+    .meta-item {
+      padding: 12px;
+      min-width: 0;
+    }
+
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .value {
+      display: block;
+      margin-top: 4px;
+      overflow-wrap: anywhere;
+    }
+
+    .score-card {
+      display: grid;
+      place-items: center;
+      min-height: 180px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel-2);
+    }
+
+    .score {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score.green { color: var(--success); }
+    .score.yellow { color: var(--medium); }
+    .score.orange { color: var(--high); }
+    .score.red { color: var(--critical); }
+
+    .summary {
+      display: grid;
+      grid-template-columns: minmax(280px, 1.4fr) repeat(2, minmax(180px, 0.8fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .summary-card,
+    .chart {
+      padding: 16px;
+      background: var(--panel);
+    }
+
+    .metric {
+      margin-top: 8px;
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 92px minmax(80px, 1fr) 36px;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .bar-track {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #21262d;
+    }
+
+    .bar {
+      height: 100%;
+      min-width: 2px;
+      border-radius: inherit;
+    }
+
+    .CRITICAL { color: var(--critical); }
+    .HIGH { color: var(--high); }
+    .MEDIUM { color: var(--medium); }
+    .LOW { color: var(--low); }
+    .INFO { color: var(--info); }
+    .bar.CRITICAL, .badge.CRITICAL { background: var(--critical); color: #0d1117; }
+    .bar.HIGH, .badge.HIGH { background: var(--high); color: #0d1117; }
+    .bar.MEDIUM, .badge.MEDIUM { background: var(--medium); color: #0d1117; }
+    .bar.LOW, .badge.LOW { background: var(--low); color: #0d1117; }
+    .bar.INFO, .badge.INFO { background: var(--info); color: #0d1117; }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: var(--panel);
+    }
+
+    select {
+      color: var(--text);
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font: inherit;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .badge {
+      display: inline-block;
+      min-width: 76px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .resource {
+      max-width: 360px;
+      overflow-wrap: anywhere;
+      color: #c9d1d9;
+    }
+
+    details {
+      margin-top: 8px;
+    }
+
+    summary {
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    .details-box {
+      margin-top: 8px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #0d1117;
+      color: #c9d1d9;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 760px) {
+      .hero,
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+  <main>
+    <section class="hero">
+      <div>
+        <h1>Cloud Security Suite IAM Auditor Demo Report</h1>
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="label">Account ID</span>
+            <span class="value">123456789012</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Region</span>
+            <span class="value">us-east-1</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Scan Timestamp</span>
+            <span class="value">2026-04-27T23:58:12.871865+00:00</span>
+          </div>
+        </div>
+      </div>
+      <div class="score-card">
+        <span class="label">Overall Risk Score</span>
+        <span class="score red">89.3</span>
+      </div>
+    </section>
+
+    <section class="summary" aria-label="Report summary">
+      <div class="chart">
+        <span class="label">Severity Breakdown</span>
+        
+        
+        <div class="bar-row">
+          <span class="CRITICAL">CRITICAL</span>
+          <span class="bar-track">
+            <span class="bar CRITICAL" style="width: 100.0%"></span>
+          </span>
+          <span>2</span>
+        </div>
+        
+        
+        <div class="bar-row">
+          <span class="HIGH">HIGH</span>
+          <span class="bar-track">
+            <span class="bar HIGH" style="width: 100.0%"></span>
+          </span>
+          <span>2</span>
+        </div>
+        
+        
+        <div class="bar-row">
+          <span class="MEDIUM">MEDIUM</span>
+          <span class="bar-track">
+            <span class="bar MEDIUM" style="width: 100.0%"></span>
+          </span>
+          <span>2</span>
+        </div>
+        
+        
+        <div class="bar-row">
+          <span class="LOW">LOW</span>
+          <span class="bar-track">
+            <span class="bar LOW" style="width: 100.0%"></span>
+          </span>
+          <span>2</span>
+        </div>
+        
+        
+        <div class="bar-row">
+          <span class="INFO">INFO</span>
+          <span class="bar-track">
+            <span class="bar INFO" style="width: 50.0%"></span>
+          </span>
+          <span>1</span>
+        </div>
+        
+      </div>
+      <div class="summary-card">
+        <span class="label">Total Findings</span>
+        <div class="metric">9</div>
+      </div>
+      <div class="summary-card">
+        <span class="label">Scan Duration</span>
+        <div class="metric">12.84s</div>
+      </div>
+    </section>
+
+    <h2>Findings</h2>
+    <div class="controls">
+      <span class="label">Click a column header to sort</span>
+      <label>
+        <span class="label">Filter Severity</span>
+        <select id="severity-filter">
+          <option value="ALL">All severities</option>
+          
+          <option value="CRITICAL">CRITICAL</option>
+          
+          <option value="HIGH">HIGH</option>
+          
+          <option value="MEDIUM">MEDIUM</option>
+          
+          <option value="LOW">LOW</option>
+          
+          <option value="INFO">INFO</option>
+          
+        </select>
+      </label>
+    </div>
+
+    <table id="findings-table">
+      <thead>
+        <tr>
+          <th data-sort="severity">Severity</th>
+          <th data-sort="check">Check</th>
+          <th data-sort="title">Title</th>
+          <th data-sort="resource">Resource</th>
+          <th data-sort="region">Region</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr data-severity="CRITICAL">
+          <td data-value="100">
+            <span class="badge CRITICAL">CRITICAL</span>
+          </td>
+          <td data-value="IAM-001">IAM-001</td>
+          <td data-value="Root account MFA is disabled">
+            <strong>Root account MFA is disabled</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> The demo root user has no MFA device configured.</p>
+                <p><strong>Remediation:</strong> Enable a hardware MFA device for the root account and store recovery codes securely.</p>
+                
+                <p><strong>References:</strong> https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_enable_physical.html</p>
+                
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="arn:aws:iam::123456789012:root">arn:aws:iam::123456789012:root</td>
+          <td data-value="-">-</td>
+        </tr>
+        
+        <tr data-severity="CRITICAL">
+          <td data-value="100">
+            <span class="badge CRITICAL">CRITICAL</span>
+          </td>
+          <td data-value="IAM-006">IAM-006</td>
+          <td data-value="Customer-managed policy allows wildcard administrator access">
+            <strong>Customer-managed policy allows wildcard administrator access</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> A customer-managed policy allows Action * on Resource *.</p>
+                <p><strong>Remediation:</strong> Replace the policy with least-privilege permissions scoped to required services and resources.</p>
+                
+                <p><strong>References:</strong> https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege</p>
+                
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="arn:aws:iam::123456789012:policy/DemoFullAccess">arn:aws:iam::123456789012:policy/DemoFullAccess</td>
+          <td data-value="-">-</td>
+        </tr>
+        
+        <tr data-severity="HIGH">
+          <td data-value="75">
+            <span class="badge HIGH">HIGH</span>
+          </td>
+          <td data-value="IAM-007">IAM-007</td>
+          <td data-value="IAM user has direct administrator privileges">
+            <strong>IAM user has direct administrator privileges</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> The demo-admin user has direct administrative permissions.</p>
+                <p><strong>Remediation:</strong> Move admin access to a reviewed group or assumed role and remove direct user attachment.</p>
+                
+                <p><strong>References:</strong> https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#use-groups-for-permissions</p>
+                
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="arn:aws:iam::123456789012:user/demo-admin">arn:aws:iam::123456789012:user/demo-admin</td>
+          <td data-value="-">-</td>
+        </tr>
+        
+        <tr data-severity="HIGH">
+          <td data-value="75">
+            <span class="badge HIGH">HIGH</span>
+          </td>
+          <td data-value="IAM-011">IAM-011</td>
+          <td data-value="Console user does not have MFA">
+            <strong>Console user does not have MFA</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> The console-operator user has a login profile but no MFA devices.</p>
+                <p><strong>Remediation:</strong> Assign MFA or remove the login profile if console access is unnecessary.</p>
+                
+                <p><strong>References:</strong> https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_enable.html</p>
+                
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="arn:aws:iam::123456789012:user/console-operator">arn:aws:iam::123456789012:user/console-operator</td>
+          <td data-value="-">-</td>
+        </tr>
+        
+        <tr data-severity="MEDIUM">
+          <td data-value="50">
+            <span class="badge MEDIUM">MEDIUM</span>
+          </td>
+          <td data-value="IAM-003">IAM-003</td>
+          <td data-value="IAM access key should be reviewed for rotation">
+            <strong>IAM access key should be reviewed for rotation</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> The ci-bot access key is 74 days old.</p>
+                <p><strong>Remediation:</strong> Rotate the key and delete the previous key after workloads are updated.</p>
+                
+                <p><strong>References:</strong> https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html</p>
+                
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="ci-bot/access-key-****ABCD">ci-bot/access-key-****ABCD</td>
+          <td data-value="-">-</td>
+        </tr>
+        
+        <tr data-severity="MEDIUM">
+          <td data-value="50">
+            <span class="badge MEDIUM">MEDIUM</span>
+          </td>
+          <td data-value="IAM-005">IAM-005</td>
+          <td data-value="IAM access key is unused">
+            <strong>IAM access key is unused</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> The legacy-app access key has never been used.</p>
+                <p><strong>Remediation:</strong> Deactivate and delete the unused key after confirming it is not needed.</p>
+                
+                <p><strong>References:</strong> https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html</p>
+                
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="legacy-app/access-key-****WXYZ">legacy-app/access-key-****WXYZ</td>
+          <td data-value="-">-</td>
+        </tr>
+        
+        <tr data-severity="LOW">
+          <td data-value="25">
+            <span class="badge LOW">LOW</span>
+          </td>
+          <td data-value="IAM-008">IAM-008</td>
+          <td data-value="IAM entity has inline policies">
+            <strong>IAM entity has inline policies</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> The app-role role has an inline policy named InlineS3Access.</p>
+                <p><strong>Remediation:</strong> Move inline permissions into a customer-managed policy for reuse and review.</p>
+                
+                <p><strong>References:</strong> https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html</p>
+                
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="arn:aws:iam::123456789012:role/app-role">arn:aws:iam::123456789012:role/app-role</td>
+          <td data-value="-">-</td>
+        </tr>
+        
+        <tr data-severity="LOW">
+          <td data-value="25">
+            <span class="badge LOW">LOW</span>
+          </td>
+          <td data-value="IAM-012">IAM-012</td>
+          <td data-value="Empty IAM group has attached permissions">
+            <strong>Empty IAM group has attached permissions</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> The future-admins group has policies but no users.</p>
+                <p><strong>Remediation:</strong> Remove policies from empty groups or delete groups that are not part of the access model.</p>
+                
+                <p><strong>References:</strong> https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups_manage.html</p>
+                
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="arn:aws:iam::123456789012:group/future-admins">arn:aws:iam::123456789012:group/future-admins</td>
+          <td data-value="-">-</td>
+        </tr>
+        
+        <tr data-severity="INFO">
+          <td data-value="10">
+            <span class="badge INFO">INFO</span>
+          </td>
+          <td data-value="IAM-003">IAM-003</td>
+          <td data-value="IAM access key should be reviewed for rotation">
+            <strong>IAM access key should be reviewed for rotation</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> The reporting access key is 42 days old.</p>
+                <p><strong>Remediation:</strong> Track this key and rotate before it reaches the high-risk age threshold.</p>
+                
+                <p><strong>References:</strong> https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html</p>
+                
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="reporting/access-key-****2468">reporting/access-key-****2468</td>
+          <td data-value="-">-</td>
+        </tr>
+        
+      </tbody>
+    </table>
+
+    <footer>
+      Generated by Cloud Security Suite - github.com/oyousef25/cloud-security-suite -
+      2026-04-27T23:58:12.871865+00:00
+    </footer>
+  </main>
+  <script>
+    const table = document.querySelector("#findings-table");
+    const tbody = table.querySelector("tbody");
+    let sortState = { index: 0, ascending: false };
+
+    table.querySelectorAll("th").forEach((header, index) => {
+      header.addEventListener("click", () => {
+        const ascending = sortState.index === index ? !sortState.ascending : true;
+        sortState = { index, ascending };
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        rows.sort((left, right) => {
+          const leftValue = left.children[index].dataset.value || left.children[index].innerText;
+          const rightValue = right.children[index].dataset.value || right.children[index].innerText;
+          const leftNumber = Number(leftValue);
+          const rightNumber = Number(rightValue);
+          const result = Number.isNaN(leftNumber) || Number.isNaN(rightNumber)
+            ? leftValue.localeCompare(rightValue)
+            : leftNumber - rightNumber;
+          return ascending ? result : -result;
+        });
+        tbody.replaceChildren(...rows);
+      });
+    });
+
+    document.querySelector("#severity-filter").addEventListener("change", (event) => {
+      const selected = event.target.value;
+      tbody.querySelectorAll("tr").forEach((row) => {
+        row.hidden = selected !== "ALL" && row.dataset.severity !== selected;
+      });
+    });
+  </script>
+</body>
+</html>

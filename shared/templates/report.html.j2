@@ -3,21 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cloud Security Suite Report</title>
+  <title>{{ metadata.report_title | default("Cloud Security Suite Report") }}</title>
   <style>
     :root {
       color-scheme: dark;
       --bg: #0d1117;
       --panel: #161b22;
+      --panel-2: #0f1623;
       --text: #e6edf3;
       --muted: #8b949e;
       --border: #30363d;
-      --critical: #ff4d4f;
-      --high: #ff9f43;
-      --medium: #f4d35e;
+      --accent: #58a6ff;
+      --success: #3fb950;
+      --critical: #ff6b6b;
+      --high: #f0883e;
+      --medium: #d29922;
       --low: #58a6ff;
       --info: #8b949e;
     }
+
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -28,57 +33,172 @@
     }
 
     main {
-      max-width: 1180px;
+      max-width: 1240px;
       margin: 0 auto;
       padding: 32px 20px;
     }
 
-    h1, h2 {
-      margin: 0 0 16px;
-    }
-
-    .summary {
+    .hero {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-
-    .card, .chart-placeholder {
-      background: var(--panel);
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 24px;
+      align-items: center;
+      padding: 28px;
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 16px;
+      background:
+        linear-gradient(135deg, rgba(88, 166, 255, 0.18), transparent 42%),
+        linear-gradient(315deg, rgba(63, 185, 80, 0.12), transparent 35%),
+        var(--panel);
     }
 
-    .metric {
+    h1 {
+      margin: 0 0 14px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 32px 0 14px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .meta-item,
+    .summary-card,
+    .chart,
+    .controls {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(13, 17, 23, 0.66);
+    }
+
+    .meta-item {
+      padding: 12px;
+      min-width: 0;
+    }
+
+    .label {
+      display: block;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
       text-transform: uppercase;
     }
 
     .value {
       display: block;
-      margin-top: 8px;
-      font-size: 28px;
-      font-weight: 700;
+      margin-top: 4px;
+      overflow-wrap: anywhere;
     }
 
-    .chart-placeholder {
-      margin-bottom: 28px;
-      color: var(--muted);
+    .score-card {
+      display: grid;
+      place-items: center;
+      min-height: 180px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel-2);
+    }
+
+    .score {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score.green { color: var(--success); }
+    .score.yellow { color: var(--medium); }
+    .score.orange { color: var(--high); }
+    .score.red { color: var(--critical); }
+
+    .summary {
+      display: grid;
+      grid-template-columns: minmax(280px, 1.4fr) repeat(2, minmax(180px, 0.8fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .summary-card,
+    .chart {
+      padding: 16px;
+      background: var(--panel);
+    }
+
+    .metric {
+      margin-top: 8px;
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 92px minmax(80px, 1fr) 36px;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .bar-track {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #21262d;
+    }
+
+    .bar {
+      height: 100%;
+      min-width: 2px;
+      border-radius: inherit;
+    }
+
+    .CRITICAL { color: var(--critical); }
+    .HIGH { color: var(--high); }
+    .MEDIUM { color: var(--medium); }
+    .LOW { color: var(--low); }
+    .INFO { color: var(--info); }
+    .bar.CRITICAL, .badge.CRITICAL { background: var(--critical); color: #0d1117; }
+    .bar.HIGH, .badge.HIGH { background: var(--high); color: #0d1117; }
+    .bar.MEDIUM, .badge.MEDIUM { background: var(--medium); color: #0d1117; }
+    .bar.LOW, .badge.LOW { background: var(--low); color: #0d1117; }
+    .bar.INFO, .badge.INFO { background: var(--info); color: #0d1117; }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: var(--panel);
+    }
+
+    select {
+      color: var(--text);
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font: inherit;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: var(--panel);
+      overflow: hidden;
       border: 1px solid var(--border);
       border-radius: 8px;
-      overflow: hidden;
+      background: var(--panel);
     }
 
-    th, td {
+    th,
+    td {
       padding: 12px;
       border-bottom: 1px solid var(--border);
       text-align: left;
@@ -88,86 +208,204 @@
     th {
       color: var(--muted);
       cursor: pointer;
+      font-size: 12px;
+      text-transform: uppercase;
       user-select: none;
     }
 
-    tr:last-child td {
-      border-bottom: 0;
+    tr:last-child td { border-bottom: 0; }
+
+    .badge {
+      display: inline-block;
+      min-width: 76px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
     }
 
-    .severity {
-      font-weight: 700;
+    .resource {
+      max-width: 360px;
+      overflow-wrap: anywhere;
+      color: #c9d1d9;
     }
 
-    .CRITICAL { color: var(--critical); }
-    .HIGH { color: var(--high); }
-    .MEDIUM { color: var(--medium); }
-    .LOW { color: var(--low); }
-    .INFO { color: var(--info); }
+    details {
+      margin-top: 8px;
+    }
+
+    summary {
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    .details-box {
+      margin-top: 8px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #0d1117;
+      color: #c9d1d9;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 760px) {
+      .hero,
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
   </style>
 </head>
+{% set score_color = "green" if risk_score <= 25 else "yellow" if risk_score <= 50 else "orange" if risk_score <= 75 else "red" %}
+{% set max_count = summary.values() | max if summary else 1 %}
 <body>
   <main>
-    <h1>Cloud Security Suite Report</h1>
-    <section class="summary" aria-label="Report summary">
-      <div class="card">
-        <span class="metric">Total Findings</span>
-        <span class="value">{{ total_findings }}</span>
+    <section class="hero">
+      <div>
+        <h1>{{ metadata.report_title | default("Cloud Security Suite IAM Auditor Report") }}</h1>
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="label">Account ID</span>
+            <span class="value">{{ metadata.account_id | default("unknown") }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Region</span>
+            <span class="value">{{ metadata.region | default("global") }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Scan Timestamp</span>
+            <span class="value">{{ metadata.scan_timestamp | default("unknown") }}</span>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <span class="metric">Risk Score</span>
-        <span class="value">{{ risk_score }}</span>
+      <div class="score-card">
+        <span class="label">Overall Risk Score</span>
+        <span class="score {{ score_color }}">{{ risk_score }}</span>
       </div>
-      {% for severity, count in summary.items() %}
-      <div class="card">
-        <span class="metric">{{ severity }}</span>
-        <span class="value">{{ count }}</span>
-      </div>
-      {% endfor %}
     </section>
 
-    <section class="chart-placeholder">Breakdown chart placeholder</section>
+    <section class="summary" aria-label="Report summary">
+      <div class="chart">
+        <span class="label">Severity Breakdown</span>
+        {% for severity, count in summary.items() %}
+        {% set width = ((count / max_count) * 100) if max_count else 0 %}
+        <div class="bar-row">
+          <span class="{{ severity }}">{{ severity }}</span>
+          <span class="bar-track">
+            <span class="bar {{ severity }}" style="width: {{ width }}%"></span>
+          </span>
+          <span>{{ count }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="summary-card">
+        <span class="label">Total Findings</span>
+        <div class="metric">{{ total_findings }}</div>
+      </div>
+      <div class="summary-card">
+        <span class="label">Scan Duration</span>
+        <div class="metric">{{ metadata.scan_duration_seconds | default("n/a") }}s</div>
+      </div>
+    </section>
 
     <h2>Findings</h2>
+    <div class="controls">
+      <span class="label">Click a column header to sort</span>
+      <label>
+        <span class="label">Filter Severity</span>
+        <select id="severity-filter">
+          <option value="ALL">All severities</option>
+          {% for severity in summary.keys() %}
+          <option value="{{ severity }}">{{ severity }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
     <table id="findings-table">
       <thead>
         <tr>
-          <th>Severity</th>
-          <th>Tool</th>
-          <th>Check ID</th>
-          <th>Resource</th>
-          <th>Region</th>
-          <th>Title</th>
-          <th>Remediation</th>
+          <th data-sort="severity">Severity</th>
+          <th data-sort="check">Check</th>
+          <th data-sort="title">Title</th>
+          <th data-sort="resource">Resource</th>
+          <th data-sort="region">Region</th>
         </tr>
       </thead>
       <tbody>
         {% for finding in findings %}
-        <tr>
-          <td class="severity {{ finding.severity.name }}">{{ finding.severity.name }}</td>
-          <td>{{ finding.tool }}</td>
-          <td>{{ finding.check_id }}</td>
-          <td>{{ finding.resource }}</td>
-          <td>{{ finding.region or "-" }}</td>
-          <td>{{ finding.title }}</td>
-          <td>{{ finding.remediation }}</td>
+        <tr data-severity="{{ finding.severity.name }}">
+          <td data-value="{{ finding.severity.value }}">
+            <span class="badge {{ finding.severity.name }}">{{ finding.severity.name }}</span>
+          </td>
+          <td data-value="{{ finding.check_id }}">{{ finding.check_id }}</td>
+          <td data-value="{{ finding.title }}">
+            <strong>{{ finding.title }}</strong>
+            <details>
+              <summary>Details and remediation</summary>
+              <div class="details-box">
+                <p><strong>Description:</strong> {{ finding.description }}</p>
+                <p><strong>Remediation:</strong> {{ finding.remediation }}</p>
+                {% if finding.references %}
+                <p><strong>References:</strong> {{ finding.references | join(", ") }}</p>
+                {% endif %}
+              </div>
+            </details>
+          </td>
+          <td class="resource" data-value="{{ finding.resource }}">{{ finding.resource }}</td>
+          <td data-value="{{ finding.region or '-' }}">{{ finding.region or "-" }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+
+    <footer>
+      Generated by Cloud Security Suite - github.com/oyousef25/cloud-security-suite -
+      {{ metadata.generated_at | default(metadata.scan_timestamp | default("unknown")) }}
+    </footer>
   </main>
   <script>
-    document.querySelectorAll("#findings-table th").forEach((header, columnIndex) => {
+    const table = document.querySelector("#findings-table");
+    const tbody = table.querySelector("tbody");
+    let sortState = { index: 0, ascending: false };
+
+    table.querySelectorAll("th").forEach((header, index) => {
       header.addEventListener("click", () => {
-        const table = header.closest("table");
-        const tbody = table.querySelector("tbody");
+        const ascending = sortState.index === index ? !sortState.ascending : true;
+        sortState = { index, ascending };
         const rows = Array.from(tbody.querySelectorAll("tr"));
         rows.sort((left, right) => {
-          const leftValue = left.children[columnIndex].innerText;
-          const rightValue = right.children[columnIndex].innerText;
-          return leftValue.localeCompare(rightValue);
+          const leftValue = left.children[index].dataset.value || left.children[index].innerText;
+          const rightValue = right.children[index].dataset.value || right.children[index].innerText;
+          const leftNumber = Number(leftValue);
+          const rightNumber = Number(rightValue);
+          const result = Number.isNaN(leftNumber) || Number.isNaN(rightNumber)
+            ? leftValue.localeCompare(rightValue)
+            : leftNumber - rightNumber;
+          return ascending ? result : -result;
         });
         tbody.replaceChildren(...rows);
+      });
+    });
+
+    document.querySelector("#severity-filter").addEventListener("change", (event) => {
+      const selected = event.target.value;
+      tbody.querySelectorAll("tr").forEach((row) => {
+        row.hidden = selected !== "ALL" && row.dataset.severity !== selected;
       });
     });
   </script>

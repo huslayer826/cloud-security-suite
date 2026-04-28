@@ -39,7 +39,8 @@ def test_html_reporter_renders_dark_report(tmp_path) -> None:
     html = output_path.read_text(encoding="utf-8")
     assert "Cloud Security Suite Report" in html
     assert "CRITICAL" in html
-    assert "Breakdown chart placeholder" in html
+    assert "Severity Breakdown" in html
+    assert "Details and remediation" in html
     assert "querySelectorAll" in html
 
 

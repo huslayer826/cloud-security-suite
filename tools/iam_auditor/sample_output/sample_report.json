@@ -1,0 +1,179 @@
+{
+  "risk_score": 89.3,
+  "summary": {
+    "CRITICAL": 2,
+    "HIGH": 2,
+    "MEDIUM": 2,
+    "LOW": 2,
+    "INFO": 1
+  },
+  "total_findings": 9,
+  "metadata": {
+    "report_title": "Cloud Security Suite IAM Auditor Demo Report",
+    "account_id": "123456789012",
+    "region": "us-east-1",
+    "scan_timestamp": "2026-04-27T23:58:12.871865+00:00",
+    "generated_at": "2026-04-27T23:58:12.871865+00:00",
+    "scan_duration_seconds": 12.84,
+    "version": "0.5.0-demo"
+  },
+  "findings": [
+    {
+      "tool": "iam-auditor",
+      "check_id": "IAM-001",
+      "severity": "CRITICAL",
+      "severity_score": 100,
+      "resource": "arn:aws:iam::123456789012:root",
+      "region": null,
+      "account_id": "123456789012",
+      "title": "Root account MFA is disabled",
+      "description": "The demo root user has no MFA device configured.",
+      "remediation": "Enable a hardware MFA device for the root account and store recovery codes securely.",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_enable_physical.html"
+      ],
+      "metadata": {},
+      "timestamp": "2026-04-27T23:58:12.871865+00:00"
+    },
+    {
+      "tool": "iam-auditor",
+      "check_id": "IAM-006",
+      "severity": "CRITICAL",
+      "severity_score": 100,
+      "resource": "arn:aws:iam::123456789012:policy/DemoFullAccess",
+      "region": null,
+      "account_id": "123456789012",
+      "title": "Customer-managed policy allows wildcard administrator access",
+      "description": "A customer-managed policy allows Action * on Resource *.",
+      "remediation": "Replace the policy with least-privilege permissions scoped to required services and resources.",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege"
+      ],
+      "metadata": {
+        "attached_users": [
+          "demo-admin"
+        ]
+      },
+      "timestamp": "2026-04-27T23:58:12.871865+00:00"
+    },
+    {
+      "tool": "iam-auditor",
+      "check_id": "IAM-007",
+      "severity": "HIGH",
+      "severity_score": 75,
+      "resource": "arn:aws:iam::123456789012:user/demo-admin",
+      "region": null,
+      "account_id": "123456789012",
+      "title": "IAM user has direct administrator privileges",
+      "description": "The demo-admin user has direct administrative permissions.",
+      "remediation": "Move admin access to a reviewed group or assumed role and remove direct user attachment.",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#use-groups-for-permissions"
+      ],
+      "metadata": {},
+      "timestamp": "2026-04-27T23:58:12.871865+00:00"
+    },
+    {
+      "tool": "iam-auditor",
+      "check_id": "IAM-011",
+      "severity": "HIGH",
+      "severity_score": 75,
+      "resource": "arn:aws:iam::123456789012:user/console-operator",
+      "region": null,
+      "account_id": "123456789012",
+      "title": "Console user does not have MFA",
+      "description": "The console-operator user has a login profile but no MFA devices.",
+      "remediation": "Assign MFA or remove the login profile if console access is unnecessary.",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_enable.html"
+      ],
+      "metadata": {},
+      "timestamp": "2026-04-27T23:58:12.871865+00:00"
+    },
+    {
+      "tool": "iam-auditor",
+      "check_id": "IAM-003",
+      "severity": "MEDIUM",
+      "severity_score": 50,
+      "resource": "ci-bot/access-key-****ABCD",
+      "region": null,
+      "account_id": "123456789012",
+      "title": "IAM access key should be reviewed for rotation",
+      "description": "The ci-bot access key is 74 days old.",
+      "remediation": "Rotate the key and delete the previous key after workloads are updated.",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html"
+      ],
+      "metadata": {},
+      "timestamp": "2026-04-27T23:58:12.871865+00:00"
+    },
+    {
+      "tool": "iam-auditor",
+      "check_id": "IAM-005",
+      "severity": "MEDIUM",
+      "severity_score": 50,
+      "resource": "legacy-app/access-key-****WXYZ",
+      "region": null,
+      "account_id": "123456789012",
+      "title": "IAM access key is unused",
+      "description": "The legacy-app access key has never been used.",
+      "remediation": "Deactivate and delete the unused key after confirming it is not needed.",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html"
+      ],
+      "metadata": {},
+      "timestamp": "2026-04-27T23:58:12.871865+00:00"
+    },
+    {
+      "tool": "iam-auditor",
+      "check_id": "IAM-008",
+      "severity": "LOW",
+      "severity_score": 25,
+      "resource": "arn:aws:iam::123456789012:role/app-role",
+      "region": null,
+      "account_id": "123456789012",
+      "title": "IAM entity has inline policies",
+      "description": "The app-role role has an inline policy named InlineS3Access.",
+      "remediation": "Move inline permissions into a customer-managed policy for reuse and review.",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html"
+      ],
+      "metadata": {},
+      "timestamp": "2026-04-27T23:58:12.871865+00:00"
+    },
+    {
+      "tool": "iam-auditor",
+      "check_id": "IAM-012",
+      "severity": "LOW",
+      "severity_score": 25,
+      "resource": "arn:aws:iam::123456789012:group/future-admins",
+      "region": null,
+      "account_id": "123456789012",
+      "title": "Empty IAM group has attached permissions",
+      "description": "The future-admins group has policies but no users.",
+      "remediation": "Remove policies from empty groups or delete groups that are not part of the access model.",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups_manage.html"
+      ],
+      "metadata": {},
+      "timestamp": "2026-04-27T23:58:12.871865+00:00"
+    },
+    {
+      "tool": "iam-auditor",
+      "check_id": "IAM-003",
+      "severity": "INFO",
+      "severity_score": 10,
+      "resource": "reporting/access-key-****2468",
+      "region": null,
+      "account_id": "123456789012",
+      "title": "IAM access key should be reviewed for rotation",
+      "description": "The reporting access key is 42 days old.",
+      "remediation": "Track this key and rotate before it reaches the high-risk age threshold.",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html"
+      ],
+      "metadata": {},
+      "timestamp": "2026-04-27T23:58:12.871865+00:00"
+    }
+  ]
+}
