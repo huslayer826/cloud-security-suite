@@ -27,6 +27,21 @@ def test_main_writes_json_and_returns_failure_for_high_findings(tmp_path) -> Non
     assert report_path.exists()
     assert payload["summary"]["CRITICAL"] == 1
     assert payload["summary"]["HIGH"] == 1
+    assert payload["metadata"]["account_id"] == "123456789012"
+
+
+def test_list_checks_exits_successfully() -> None:
+    assert iam_main.main(["--list-checks"]) == 0
+
+
+def test_selected_checks_returns_requested_check() -> None:
+    checks = iam_main.selected_checks(["IAM-001"])
+
+    assert [check.check_id for check in checks] == ["IAM-001"]
+
+
+def test_selected_checks_rejects_unknown_check() -> None:
+    assert iam_main.main(["--check", "IAM-999"]) == 2
 
 
 def test_filter_by_threshold_removes_lower_severities() -> None:

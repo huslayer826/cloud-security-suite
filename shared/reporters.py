@@ -18,11 +18,18 @@ from shared.scoring import RiskScorer
 class JSONReporter:
     """Write findings and risk score to JSON."""
 
-    def write(self, findings: list[Finding], output_path: str | Path) -> None:
+    def write(
+        self,
+        findings: list[Finding],
+        output_path: str | Path,
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
         scorer = RiskScorer(findings)
         payload: dict[str, Any] = {
             "risk_score": scorer.score(),
             "summary": scorer.score_breakdown(),
+            "total_findings": len(findings),
+            "metadata": metadata or {},
             "findings": [finding.to_dict() for finding in findings],
         }
         Path(output_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
@@ -39,14 +46,21 @@ class HTMLReporter:
             autoescape=select_autoescape(["html", "xml"]),
         )
 
-    def write(self, findings: list[Finding], output_path: str | Path) -> None:
+    def write(
+        self,
+        findings: list[Finding],
+        output_path: str | Path,
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
         scorer = RiskScorer(findings)
+        report_metadata = metadata or {}
         template = self.environment.get_template("report.html.j2")
         html = template.render(
             findings=findings,
             risk_score=scorer.score(),
             summary=scorer.score_breakdown(),
             total_findings=len(findings),
+            metadata=report_metadata,
         )
         Path(output_path).write_text(html, encoding="utf-8")
 

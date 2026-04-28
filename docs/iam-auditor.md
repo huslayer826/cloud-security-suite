@@ -60,6 +60,26 @@ The IAM Auditor checks AWS account identity controls and emits normalized Cloud 
 }
 ```
 
+## False Positive Guidance
+
+The auditor intentionally favors reviewable findings over silent assumptions. Use `--check` to run a focused subset during triage, or `--severity-threshold` to hide lower-priority findings in CI output.
+
+| Check ID | Possible false positive | Suppression guidance |
+| --- | --- | --- |
+| IAM-001 | Break-glass root account workflows may temporarily lack a newly rotated MFA device. | Validate the break-glass process, then remediate quickly rather than suppressing long term. |
+| IAM-002 | Some legacy accounts may use a federated-only model with no IAM console users. | If no IAM users have passwords, document the exception and prioritize removing login profiles. |
+| IAM-003 | Long-lived keys can be tolerated for legacy integrations during migration. | Run the specific check during migration windows and track owner-approved exceptions externally. |
+| IAM-004 | Service users may appear inactive when their access is seasonal or standby-only. | Confirm ownership and business purpose before deleting the user. |
+| IAM-005 | A brand-new key that has not been used yet may be part of an active rollout. | Recheck after rollout and delete the old or unused key promptly. |
+| IAM-006 | Broad wildcard policies may exist in isolated sandbox accounts. | Keep sandbox exceptions documented and avoid attaching them to production identities. |
+| IAM-007 | Direct admin access can be expected for a short-lived bootstrap user. | Remove direct attachment after bootstrap and prefer groups or assumed roles. |
+| IAM-008 | AWS service-created roles sometimes include inline policies. | Review service ownership before converting or deleting inline policies. |
+| IAM-009 | External trust without ExternalId may be acceptable for same-organization automation. | Add `sts:ExternalId` for third parties and document organization-owned trust exceptions. |
+| IAM-010 | Disaster recovery roles may be unused during normal operations. | Keep owner, purpose, and test cadence documented for standby roles. |
+| IAM-011 | Console access without MFA might appear during user onboarding. | Treat as temporary and verify MFA enrollment before granting broader permissions. |
+| IAM-012 | Empty groups may be staged before onboarding a team. | Remove policies until users are added, or document the planned activation date. |
+| IAM-013 | Two active keys can be valid during a short rotation window. | Confirm rotation completion and delete the retired key after validation. |
+
 ## Example CLI Usage
 
 ```bash
