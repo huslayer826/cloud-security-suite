@@ -30,3 +30,18 @@ module "iam_auditor" {
   lambda_source_hash    = try(filebase64sha256("${path.module}/modules/iam_auditor/iam_auditor_lambda.zip"), null)
   permissions_boundary  = var.permissions_boundary
 }
+
+module "guardduty_processor" {
+  source = "./modules/guardduty_processor"
+
+  project_name         = var.project_name
+  environment          = var.environment
+  notification_email   = var.notification_email
+  enable_guardduty     = var.enable_guardduty
+  auto_remediate       = var.guardduty_auto_remediate
+  dry_run              = var.guardduty_dry_run
+  slack_webhook_url    = var.slack_webhook_url
+  lambda_package_path  = "${path.module}/modules/guardduty_processor/guardduty_processor_lambda.zip"
+  lambda_source_hash   = try(filebase64sha256("${path.module}/modules/guardduty_processor/guardduty_processor_lambda.zip"), null)
+  permissions_boundary = var.permissions_boundary
+}

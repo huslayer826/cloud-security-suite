@@ -6,3 +6,9 @@ project_name        = "cloud-security-suite"
 environment         = "prod"
 notification_email  = "you@example.com"
 schedule_expression = "rate(24 hours)"
+
+# GuardDuty Processor
+enable_guardduty          = false
+guardduty_auto_remediate  = false
+guardduty_dry_run         = true
+slack_webhook_url         = ""
