@@ -32,3 +32,28 @@ output "guardduty_detector_id" {
   description = "GuardDuty detector ID when Terraform creates one."
   value       = module.guardduty_processor.guardduty_detector_id
 }
+
+output "cloudtrail_analyzer_lambda_name" {
+  description = "CloudTrail Analyzer Lambda function name."
+  value       = module.cloudtrail_analyzer.lambda_function_name
+}
+
+output "cloudtrail_analyzer_athena_workgroup_name" {
+  description = "Athena workgroup used by the CloudTrail Analyzer."
+  value       = module.cloudtrail_analyzer.athena_workgroup_name
+}
+
+output "cloudtrail_analyzer_glue_database_name" {
+  description = "Glue database containing the CloudTrail table."
+  value       = module.cloudtrail_analyzer.glue_database_name
+}
+
+output "cloudtrail_analyzer_results_bucket_name" {
+  description = "S3 bucket for Athena query results and analyzer reports."
+  value       = module.cloudtrail_analyzer.athena_results_bucket_name
+}
+
+output "cloudtrail_analyzer_alert_topic_arn" {
+  description = "SNS topic ARN for CloudTrail Analyzer alerts."
+  value       = module.cloudtrail_analyzer.alert_topic_arn
+}

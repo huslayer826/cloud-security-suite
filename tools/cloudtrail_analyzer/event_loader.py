@@ -65,6 +65,7 @@ def _wait_for_query(client: Any, execution_id: str) -> None:
 
 def _athena_row_to_event(header: list[str], values: list[str | None]) -> dict:
     event = {key: value for key, value in zip(header, values, strict=False)}
+    event = {_ATHENA_FIELD_MAP.get(key.lower(), key): value for key, value in event.items()}
     for json_field in [
         "userIdentity",
         "requestParameters",
@@ -75,3 +76,25 @@ def _athena_row_to_event(header: list[str], values: list[str | None]) -> dict:
             with suppress(json.JSONDecodeError):
                 event[json_field] = json.loads(event[json_field])
     return event
+
+
+_ATHENA_FIELD_MAP = {
+    "eventversion": "eventVersion",
+    "useridentity": "userIdentity",
+    "eventtime": "eventTime",
+    "eventsource": "eventSource",
+    "eventname": "eventName",
+    "awsregion": "awsRegion",
+    "sourceipaddress": "sourceIPAddress",
+    "useragent": "userAgent",
+    "errorcode": "errorCode",
+    "errormessage": "errorMessage",
+    "requestparameters": "requestParameters",
+    "responseelements": "responseElements",
+    "additionaleventdata": "additionalEventData",
+    "requestid": "requestID",
+    "eventid": "eventID",
+    "readonly": "readOnly",
+    "eventtype": "eventType",
+    "recipientaccountid": "recipientAccountId",
+}
