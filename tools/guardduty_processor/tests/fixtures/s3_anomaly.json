@@ -1,0 +1,29 @@
+{
+  "version": "0",
+  "id": "event-s3",
+  "detail-type": "GuardDuty Finding",
+  "source": "aws.guardduty",
+  "account": "123456789012",
+  "region": "us-east-1",
+  "detail": {
+    "id": "gd-s3-001",
+    "accountId": "123456789012",
+    "region": "us-east-1",
+    "type": "Policy:S3/BucketAnonymousAccessGranted",
+    "severity": 4.1,
+    "title": "S3 bucket anonymous access granted",
+    "description": "An S3 bucket policy allows anonymous access.",
+    "resource": {
+      "resourceType": "S3Bucket",
+      "s3BucketDetails": [
+        {
+          "name": "demo-public-bucket",
+          "arn": "arn:aws:s3:::demo-public-bucket"
+        }
+      ]
+    },
+    "service": {
+      "detectorId": "12abc34d567e8fa901bc2d34eexample"
+    }
+  }
+}

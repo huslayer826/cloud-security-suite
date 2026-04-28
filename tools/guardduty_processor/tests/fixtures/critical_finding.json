@@ -1,0 +1,29 @@
+{
+  "version": "0",
+  "id": "event-critical",
+  "detail-type": "GuardDuty Finding",
+  "source": "aws.guardduty",
+  "account": "123456789012",
+  "region": "us-east-1",
+  "detail": {
+    "id": "gd-critical-001",
+    "accountId": "123456789012",
+    "region": "us-east-1",
+    "type": "UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom",
+    "severity": 8.7,
+    "title": "IAM user called API from malicious IP",
+    "description": "An IAM user called AWS APIs from an IP on a threat list.",
+    "resource": {
+      "resourceType": "AccessKey",
+      "accessKeyDetails": {
+        "accessKeyId": "AKIAIOSFODNN7CRIT",
+        "principalId": "AIDAEXAMPLE",
+        "userName": "critical-user",
+        "userType": "IAMUser"
+      }
+    },
+    "service": {
+      "detectorId": "12abc34d567e8fa901bc2d34eexample"
+    }
+  }
+}
