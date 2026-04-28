@@ -32,3 +32,28 @@ variable "permissions_boundary" {
   type        = string
   default     = null
 }
+
+variable "enable_guardduty" {
+  description = "Whether to create and enable a GuardDuty detector in this region."
+  type        = bool
+  default     = false
+}
+
+variable "guardduty_auto_remediate" {
+  description = "Whether the GuardDuty Processor may execute remediation playbooks."
+  type        = bool
+  default     = false
+}
+
+variable "guardduty_dry_run" {
+  description = "Hard kill switch for GuardDuty remediation. Keep true unless ready to execute actions."
+  type        = bool
+  default     = true
+}
+
+variable "slack_webhook_url" {
+  description = "Optional Slack incoming webhook URL for GuardDuty notifications."
+  type        = string
+  default     = ""
+  sensitive   = true
+}

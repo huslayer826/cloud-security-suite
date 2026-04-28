@@ -12,3 +12,23 @@ output "iam_auditor_alert_topic_arn" {
   description = "SNS topic ARN for high-severity IAM Auditor alerts."
   value       = module.iam_auditor.alert_topic_arn
 }
+
+output "guardduty_processor_lambda_name" {
+  description = "GuardDuty Processor Lambda function name."
+  value       = module.guardduty_processor.lambda_function_name
+}
+
+output "guardduty_processor_notification_topic_arn" {
+  description = "SNS topic ARN for GuardDuty Processor notifications."
+  value       = module.guardduty_processor.notification_topic_arn
+}
+
+output "guardduty_processor_event_rule_name" {
+  description = "EventBridge rule that routes GuardDuty findings."
+  value       = module.guardduty_processor.event_rule_name
+}
+
+output "guardduty_detector_id" {
+  description = "GuardDuty detector ID when Terraform creates one."
+  value       = module.guardduty_processor.guardduty_detector_id
+}
