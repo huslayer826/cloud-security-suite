@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from rich.console import Console
 
@@ -20,7 +21,7 @@ def make_finding(severity: Severity = Severity.MEDIUM) -> Finding:
     )
 
 
-def test_json_reporter_writes_findings_and_summary(tmp_path) -> None:
+def test_json_reporter_writes_findings_and_summary(tmp_path: Path) -> None:
     output_path = tmp_path / "report.json"
 
     JSONReporter().write([make_finding(Severity.HIGH)], output_path)
@@ -31,7 +32,7 @@ def test_json_reporter_writes_findings_and_summary(tmp_path) -> None:
     assert payload["findings"][0]["severity"] == "HIGH"
 
 
-def test_html_reporter_renders_dark_report(tmp_path) -> None:
+def test_html_reporter_renders_dark_report(tmp_path: Path) -> None:
     output_path = tmp_path / "report.html"
 
     HTMLReporter().write([make_finding(Severity.CRITICAL)], output_path)

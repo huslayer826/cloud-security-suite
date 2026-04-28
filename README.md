@@ -1,12 +1,19 @@
 # Cloud Security Suite
 
+[![test](https://img.shields.io/github/actions/workflow/status/huslayer826/cloud-security-suite/test.yml?branch=main&label=tests)](https://github.com/huslayer826/cloud-security-suite/actions/workflows/test.yml)
+[![lint](https://img.shields.io/github/actions/workflow/status/huslayer826/cloud-security-suite/lint.yml?branch=main&label=lint)](https://github.com/huslayer826/cloud-security-suite/actions/workflows/lint.yml)
+[![coverage](https://img.shields.io/codecov/c/github/huslayer826/cloud-security-suite?label=coverage)](https://codecov.io/gh/huslayer826/cloud-security-suite)
+![Python](https://img.shields.io/badge/python-3.11-blue)
+![Terraform](https://img.shields.io/badge/terraform-%3E%3D1.6-844FBA)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 ## Project Pitch
 
 A Python and Terraform suite for automated AWS security auditing, threat detection, and incident response.
 
 ## Badges
 
-Placeholder for project badges.
+CI badges track tests, linting, coverage, supported runtime versions, and license.
 
 ## Architecture Diagram
 

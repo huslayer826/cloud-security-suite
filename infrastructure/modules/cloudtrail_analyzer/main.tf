@@ -68,22 +68,22 @@ resource "aws_glue_catalog_table" "cloudtrail_logs" {
   table_type    = "EXTERNAL_TABLE"
 
   parameters = {
-    EXTERNAL                          = "TRUE"
-    "projection.enabled"              = "true"
-    "projection.region.type"          = "enum"
-    "projection.region.values"        = var.aws_region
-    "projection.year.type"            = "integer"
-    "projection.year.range"           = "2020,2035"
-    "projection.month.type"           = "integer"
-    "projection.month.range"          = "1,12"
-    "projection.month.digits"         = "2"
-    "projection.day.type"             = "integer"
-    "projection.day.range"            = "1,31"
-    "projection.day.digits"           = "2"
-    "storage.location.template"       = "${local.cloudtrail_location}/AWSLogs/${data.aws_caller_identity.current.account_id}/CloudTrail/$${region}/$${year}/$${month}/$${day}/"
-    "classification"                  = "json"
-    "compressionType"                 = "gzip"
-    "typeOfData"                      = "file"
+    EXTERNAL                    = "TRUE"
+    "projection.enabled"        = "true"
+    "projection.region.type"    = "enum"
+    "projection.region.values"  = var.aws_region
+    "projection.year.type"      = "integer"
+    "projection.year.range"     = "2020,2035"
+    "projection.month.type"     = "integer"
+    "projection.month.range"    = "1,12"
+    "projection.month.digits"   = "2"
+    "projection.day.type"       = "integer"
+    "projection.day.range"      = "1,31"
+    "projection.day.digits"     = "2"
+    "storage.location.template" = "${local.cloudtrail_location}/AWSLogs/${data.aws_caller_identity.current.account_id}/CloudTrail/$${region}/$${year}/$${month}/$${day}/"
+    "classification"            = "json"
+    "compressionType"           = "gzip"
+    "typeOfData"                = "file"
   }
 
   partition_keys {
